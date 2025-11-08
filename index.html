@@ -19,6 +19,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             min-height: 100vh;
             overflow-x: hidden;
+            overflow: hidden;
             position: relative;
         }
 
@@ -334,9 +335,83 @@
                 padding: 20px 40px;
             }
         }
+
+        .scroll-wrapper {
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
+            -ms-overflow-style: none; /* hide scrollbar IE & Edge */
+            scrollbar-width: none; /* hide scrollbar Firefox */
+        }
+
+        .scroll-wrapper::-webkit-scrollbar {
+            display: none; /* hide scrollbar Chrome/Safari */
+        }
+
+        #countdownScreen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    color: white;
+    z-index: 2000;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+/* Titre responsive */
+#countdownTitle {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    margin-bottom: 20px;
+}
+
+/* Décompte responsive */
+#countdown {
+    font-size: clamp(2rem, 7vw, 4rem);
+    font-weight: 600;
+}
+
+/* Option : espacement sur petits écrans */
+@media (max-width: 400px) {
+    #countdownTitle {
+        margin-bottom: 15px;
+    }
+    #countdown {
+        font-size: clamp(1.5rem, 8vw, 3rem);
+    }
+}
+
+
     </style>
 </head>
 <body>
+    <!-- Écran de décompte -->
+<div id="countdownScreen">
+    <h2 id="countdownTitle">Encore un peu de patience… 😏</h2>
+    <div id="countdown"></div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- Écran d'accueil avec bouton -->
     <div id="welcomeScreen">
         <p class="welcome-text">Prête pour une surprise ? 🎁</p>
@@ -345,7 +420,7 @@
 
     <!-- Canvas pour les feux d'artifice -->
     <canvas id="fireworks"></canvas>
-
+    <div class="scroll-wrapper">
     <!-- Conteneur principal -->
     <div class="container">
         <h1>Joyeux Anniversaire !</h1>
@@ -382,6 +457,7 @@
             </p>
         </div>
     </div>
+    </div>
 
     <!-- Audio MP3 -->
     <audio id="audioPlayer" loop>
@@ -389,6 +465,75 @@
     </audio>
 
     <script>
+
+// ================================
+// COMPTE À REBOURS JUSQU'AU 17 NOVEMBRE
+// ================================
+
+const countdownScreen = document.getElementById('countdownScreen');
+const countdownLabel = document.getElementById('countdown');
+
+// Date cible
+const targetDate = new Date(new Date().getFullYear(), 10, 9); 
+// 10 = novembre (js commence à 0)
+
+function updateCountdown() {
+    const now = new Date();
+    
+    // Si c'est le bon jour:
+    if (now >= targetDate) {
+        countdownScreen.style.display = "none";
+        return; // On laisse le site normal
+    }
+
+    // Sinon on masque le site derrière
+    document.querySelector('.container').style.display = 'none';
+    document.getElementById('fireworks').style.display = 'none';
+    document.getElementById('welcomeScreen').style.display = 'none';
+    
+    // Calcul du temps restant
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+        location.reload(); // à minuit, auto-refresh → SURPRISE !
+        return;
+    }
+
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const seconds = Math.floor((diff % (1000*60)) / 1000);
+
+    countdownLabel.textContent =
+        `${days}j ${hours}h ${minutes}m ${seconds}s`;
+}
+
+// update toutes les secondes
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // ============================================
         // GESTION DU BOUTON D'ACCUEIL
         // ============================================
